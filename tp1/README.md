@@ -10,6 +10,8 @@ Allez lire le fichier "kernel/include/segmem.h". Vous y trouverez plein d'inform
 
 Il est nécessaire d'utiliser KVM à la place. Vous devez donc modifier au préalable le fichier utils/config.mk à la ligne:
 
+##KVM est pour simuler le vrai (secos)
+
 ```bash
  QEMU := $(shell which qemu-system-x86_64)
 ```

@@ -45,12 +45,13 @@ void set_each_descriptor(seg_desc_t* seg, uint8_t type, uint8_t dpl,uint32_t bas
     seg->base_2=(base>>16) & 0xffff;
     seg->base_3=(base>>24) & 0xffff;
     seg->limit_1=limit & 0xffff;
-    seg->limit_2=(limit>>16) & 0xffff;
+    seg->limit_2=(limit>>16) & 0xf;
     seg->p=1;
     seg->avl=1;
     seg->d=1;
     seg->g=1;
     seg->l=0;
+    seg->s=1;
 }
 
 void init_gdt(){
@@ -63,22 +64,29 @@ void init_gdt(){
     gdtr.limit=SIZE_DGR*sizeof(seg_desc_t)-1;
     gdtr.desc= GDT;
     set_gdtr(gdtr);
-/*
+
+//pour forcer le kernel a reinitialiser et recharger le registre de segment
     set_cs(gdt_krn_seg_sel(1));
     set_ds(gdt_krn_seg_sel(2));
     set_ss(gdt_krn_seg_sel(2));
     set_fs(gdt_krn_seg_sel(2));
     set_es(gdt_krn_seg_sel(2));
     set_gs(gdt_krn_seg_sel(2));
-    */
+    
 }
-void set_desc_es(){
-    set_each_descriptor(&GDT[3],SEG_DESC_DATA_RW,SEG_SEL_KRN,0x600000, 0xffffffff);
-    gdt_reg_t gdtr;
-    gdtr.limit=SIZE_DGR*sizeof(seg_desc_t)-1;
-    gdtr.desc= GDT;
-    set_gdtr(gdtr);
-    //set_es(3);
+void mem(){
+    set_each_descriptor(&GDT[3],SEG_DESC_DATA_RW,SEG_SEL_KRN,0x600000, 31);
+    set_es(gdt_krn_seg_sel(3));
+    debug("manipulation de memoire\n");
+    print_gdt();
+    char  src[64];
+    char *dst = 0;
+    memset(src, 0xff, 64);
+    //on rencontre un General Protection fault, on sera protege materiellement par le microprocesseur
+    _memcpy8(dst, src, 64);
+    // address dans eip
+    //$ objdump -d kernel.elf | grep 30403e
+    //30403e:	f3 ab                	rep stos %eax,%es:(%edi)
 }
 
 void tp()
@@ -87,10 +95,5 @@ void tp()
     init_gdt();
     debug("######after initialization######\n");
     print_gdt();
-
-    char  src[64];
-    //char *dst = 0;
-
-    memset(src, 0xff, 64);
-
+    mem();
 }
