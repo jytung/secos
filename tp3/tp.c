@@ -119,8 +119,8 @@ void tp()
     chargement_de_segments();
     debug("######after chargement_de_segments######\n");
     print_gdt();
-    debug("######after farjump######\n");
     //farjump_to_userland();
     go_to_userland();
+    debug("######after farjump######\n");
     print_gdt();
 }
