@@ -23,20 +23,25 @@ CFLG_REL   := -DRELEASE=\"secos-$(RELEASE)\"
 CFLAGS     := $(CFLG_WRN) $(CFLG_FP) $(CFLG_KRN) $(CFLG_32) $(CFLG_REL)
 
 # elementary kernel parts
-INCLUDE    := -I../kernel/include
+INCLUDE    := -I../kernel/include -I../lib/include
 CORE       := ../kernel/core/
-
+LIB_CORE   := ../lib/core/
 core_obj   :=	entry.o \
-		start.o \
-		print.o \
-		uart.o	\
-		pic.o 	\
-		intr.o	\
-		idt.o	\
-		excp.o	\
-		stack.o
+				start.o \
+				print.o \
+				uart.o	\
+				pic.o 	\
+				intr.o	\
+				idt.o	\
+				excp.o	\
+				stack.o	
 
-objects    := $(addprefix $(CORE), $(core_obj))
+lib_core_obj :=	gdt.o		\
+				pagination.o \
+
+krn_objects    := $(addprefix $(CORE),   $(core_obj))
+lib_objects  := $(addprefix $(LIB_CORE), $(lib_core_obj))
+objects := $(krn_objects) $(lib_objects)
 
 # Linking options
 LDFLG_32   := -melf_i386
@@ -48,14 +53,14 @@ LDSCRIPT   := ../utils/linker.lds
 TARGET     := kernel.elf
 
 # Qemu options
-QEMU := $(shell which qemu-system-i386)
-#QEMU := $(shell which kvm)
+QEMU := $(shell which kvm)
+#QEMU := $(shell which qemu-system-x86_64)
 QFDA := -drive media=disk,format=raw,if=floppy,file=../utils/grub.floppy
 QHDD := -drive media=disk,format=raw,if=ide,index=0,file=fat:rw:.
 QSRL := -serial mon:stdio
 QDBG := -d int,pcall,cpu_reset,unimp,guest_errors
-QOPT := $(QFDA) $(QHDD) $(QSRL) -boot a -nographic
+QOPT := $(QFDA) $(QHDD) $(QSRL) $(QDBG) -boot a -nographic 
 
 ifneq ($(findstring "kvm",$(QEMU)),)
-QOPT += -cpu host
+QOPT += -cpu host 
 endif
