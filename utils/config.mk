@@ -38,6 +38,7 @@ core_obj   :=	entry.o \
 
 lib_core_obj :=	gdt.o		\
 				pagination.o \
+				task.o
 
 krn_objects    := $(addprefix $(CORE),   $(core_obj))
 lib_objects  := $(addprefix $(LIB_CORE), $(lib_core_obj))
