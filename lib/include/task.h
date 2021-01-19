@@ -9,10 +9,10 @@
 typedef struct task
 
 {
-    pde32_t *   pgd;
-    struct task *    next_task;
-    uint32_t*   krn_stack_ebp;
-    uint32_t*   krn_stack_esp;
+    pde32_t *           pgd;
+    struct task *       next_task;
+    uint32_t*           krn_stack_ebp;
+    uint32_t*           krn_stack_esp;
 } task_t;
 
 void init_task(task_t * task, task_t *next_task, pde32_t * pgd);

@@ -51,6 +51,7 @@ void set_each_descriptor(seg_desc_t *seg, uint8_t type, uint8_t dpl, uint32_t ba
 
 void init_TSS()
 {
+    debug("\nTSS initialization \n");
     offset_t base = (offset_t)&TSS;
     uint32_t limit = sizeof(TSS) - 1;
 
@@ -63,6 +64,7 @@ void init_TSS()
 
 void init_gdt()
 {
+    debug("\nGDT initialization: \n");
     GDT[0].raw = 0ULL;
     gdt_reg_t gdtr;
     gdtr.limit = SIZE_GDT * sizeof(seg_desc_t) - 1;
@@ -86,4 +88,5 @@ void init_gdt()
     set_es(gdt_usr_seg_sel(4));
     set_fs(gdt_usr_seg_sel(4));
     set_gs(gdt_usr_seg_sel(4));
+    print_gdt();
 }

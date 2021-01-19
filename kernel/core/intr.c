@@ -34,32 +34,28 @@ void switch_to_user_mode(uint32_t *interrupted_esp, uint32_t * next_esp)
    // switching user mode
    debug("Task switching!!!\n\n");
    asm volatile( 
-                 "push     %%ebp   ;"     
-			        "mov     %%esp,%0 ;"
-                 "mov     %1,%%esp ;"  
-                 "pop      %%ebp   ;"   
-                 "outb	%%al, $0x20 ;" //end of interruption signal 
-	              "pop	%%eax       ;" 
-                 "sti              ;" //force interruption
-                 "nop              ;"  
-			        "ret              ;"
+                 "push    %%ebp     ;"     
+			        "mov     %%esp,%0  ;"
+                 "mov     %1,%%esp  ;"  
+                 "pop     %%ebp     ;"   
+			        "iret              ;"
                  :: "m"(interrupted_esp),
                     "r"(next_esp));
-
 }
+
 
 void __regparm__(1) intr32_hdlr(int_ctx_t *ctx)
 {
    
    uint32_t* interrupted_esp =(uint32_t*)get_esp();
-   debug("Enter int32 handler\n");
+   debug("\nEnter int32 handler\n");
    uint32_t eip = ctx->eip.raw;
    
    //Identify interrupted task
-   if(/*eip>=KERNEL_BEGIN && */eip<= KERNEL_END) {
+   if(eip>=KERNEL_BEGIN && eip< USER1_BEGIN) {
       debug("Kernel task interrupted \n");
    }
-   else if(eip >=USER1_BEGIN && eip <=USER1_END){
+   else if(eip >=USER1_BEGIN && eip <USER2_BEGIN){
       debug("User1 task interrupted \n");
    }
    else if(eip >=USER2_BEGIN && eip <=USER2_END){

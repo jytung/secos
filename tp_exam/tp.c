@@ -11,8 +11,8 @@
 
 extern info_t *info;
 extern task_t *current_task;
-uint32_t *cpt_user1 = (uint32_t *)0x1000; //virtual addr of SHM
-uint32_t *cpt_user2 = (uint32_t *)0x1000; 
+uint32_t *cpt_user1 = (uint32_t *)CPT_USER1_ADDR; 
+uint32_t *cpt_user2 = (uint32_t *)CPT_USER2_ADDR; 
 
 task_t *krn_task;
 task_t *usr1_task;
@@ -26,25 +26,28 @@ void sys_counter(uint32_t *cpt)
 
 void __attribute__((section(".user1"))) user1()
 {
-
     //write in the shared memory
-    while (1)
+    /*while (1)
     {
         (*cpt_user1)++;
     }
+    */
+   debug("user1");
 }
 
 void __attribute__((section(".user2"))) user2()
 {
     //read in the shared memory
-    while (1)
+    /*while (1)
     {
         sys_counter(cpt_user2);
-    }
+    }*/
+    debug("user2");
 }
 
 void initialise_all_tasks()
 {
+    debug("\nInitialise tasks \n");
     pde32_t *kernel_pgd = (pde32_t *)KRN_PGD;
     pde32_t *user1_pgd = (pde32_t *)U1_PGD;
     pde32_t *user2_pgd = (pde32_t *)U2_PGD;
@@ -60,21 +63,20 @@ void initialise_all_tasks()
 
 void tp()
 {
-    debug("\nGDT initialization: \n");
+    
     init_gdt();
-    print_gdt();
-    debug("\nTSS initialization \n");
     init_TSS();
-    debug("\nActivate pagination \n");
+
+    debug("\nInitialise compter to 0 \n");
+    *cpt_user1 = 0;
+    *cpt_user2 = 0;
+
     pagination();
-    //print_gdt();
     debug("\nEnable interruption \n");
     idt_reg_t idtr;
     get_idtr(idtr);
-    debug("\nInitialise tasks \n");
+
     initialise_all_tasks();
-    debug("\nInitialise compter to 0 \n\n");
-    *cpt_user1 = 0;
-    *cpt_user2 = 0;
+    
     force_interrupts_on();
 }
