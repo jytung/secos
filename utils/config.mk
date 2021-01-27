@@ -34,7 +34,8 @@ core_obj   :=	entry.o \
 				intr.o	\
 				idt.o	\
 				excp.o	\
-				stack.o	
+				stack.o	\
+				switch_stack.o
 
 lib_core_obj :=	gdt.o		\
 				pagination.o \

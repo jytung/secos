@@ -7,6 +7,9 @@
 .globl idt_trampoline
 .type  idt_trampoline,"function"
 
+.globl idt_common
+.type  idt_common,"function"
+
 /*
 ** send end-of-interrupt to PIC
 */

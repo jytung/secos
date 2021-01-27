@@ -9,7 +9,7 @@
 
 
 /*******    Kernel         ********/
-#define KERNEL_BEGIN    0x200000
+#define KERNEL_BEGIN    0x300000
 #define KERNEL_T1_STACK 0x300000
 #define KERNEL_T2_STACK 0x310000
 
@@ -29,12 +29,12 @@
 /*******    User 1         ********/
 #define USER1_BEGIN     0x400000
 #define CPT_USER1_ADDR  0x401000
-#define USER1_STACK     0x410000
+#define USER1_STACK     0x4A0000
 
 /*******    User 2         ********/
 #define USER2_BEGIN     0x800000
 #define CPT_USER2_ADDR  0x801000
-#define USER2_STACK     0x810000
+#define USER2_STACK     0x8A0000
 #define USER2_END       0xBFFFFF
 /*******    Shared memory  ********/
 #define SHM_ADDR        0XC10000

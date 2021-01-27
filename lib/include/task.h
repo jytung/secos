@@ -7,7 +7,6 @@
 #include <gpr.h>
 
 typedef struct task
-
 {
     pde32_t *           pgd;
     struct task *       next_task;

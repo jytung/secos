@@ -10,7 +10,7 @@ extern void idt_trampoline();
 static int_desc_t IDT[IDT_NR_DESC];
 task_t *current_task;
 extern tss_t TSS;
-
+extern void __attribute__((regparm(1))) switch_stack(uint32_t* interrupted_esp, uint32_t* next_esp);
 
 void intr_init()
 {
@@ -29,27 +29,13 @@ void intr_init()
    set_idtr(idtr);
 }
 
-void switch_to_user_mode(uint32_t *interrupted_esp, uint32_t * next_esp)
-{
-   // switching user mode
-   debug("Task switching!!!\n\n");
-   asm volatile( 
-                 "push    %%ebp     ;"     
-			        "mov     %%esp,%0  ;"
-                 "mov     %1,%%esp  ;"  
-                 "pop     %%ebp     ;"   
-			        "iret              ;"
-                 :: "m"(interrupted_esp),
-                    "r"(next_esp));
-}
-
-
 void __regparm__(1) intr32_hdlr(int_ctx_t *ctx)
 {
    
    uint32_t* interrupted_esp =(uint32_t*)get_esp();
    debug("\nEnter int32 handler\n");
    uint32_t eip = ctx->eip.raw;
+   current_task = current_task->next_task;
    
    //Identify interrupted task
    if(eip>=KERNEL_BEGIN && eip< USER1_BEGIN) {
@@ -62,17 +48,16 @@ void __regparm__(1) intr32_hdlr(int_ctx_t *ctx)
       debug("User2 task interrupted \n");
    }
 
-   current_task = current_task->next_task;
+   
    debug("interrupted_esp: %x \n", interrupted_esp);
    debug("next_esp: %x \n", current_task->krn_stack_esp);
 
-   //save kernel stack in TSS
-   TSS.s0.esp = (uint32_t)current_task->krn_stack_esp;
+   TSS.s0.esp = (uint32_t)current_task->krn_stack_ebp;
    set_cr3(current_task->pgd);
   
 
    //change stack
-   switch_to_user_mode(interrupted_esp, current_task->krn_stack_esp);
+   switch_stack(interrupted_esp, current_task->krn_stack_esp);
 }
 
 void intr80_hdlr(int_ctx_t *ctx){

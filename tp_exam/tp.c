@@ -27,22 +27,24 @@ void sys_counter(uint32_t *cpt)
 void __attribute__((section(".user1"))) user1()
 {
     //write in the shared memory
-    /*while (1)
+    while (1)
     {
-        (*cpt_user1)++;
+        //(*cpt_user1)++;
+        debug("user1");
     }
-    */
-   debug("user1");
+    
+   
 }
 
 void __attribute__((section(".user2"))) user2()
 {
     //read in the shared memory
-    /*while (1)
+    while (1)
     {
-        sys_counter(cpt_user2);
-    }*/
-    debug("user2");
+        //sys_counter(cpt_user2);
+        debug("user2");
+    }
+    
 }
 
 void initialise_all_tasks()
@@ -56,7 +58,7 @@ void initialise_all_tasks()
     init_task(usr1_task, usr2_task, user1_pgd);
     init_task(usr2_task, usr1_task, user2_pgd);
     init_task_stack(usr1_task, (uint32_t*)KERNEL_T1_STACK, (uint32_t*)USER1_STACK,(uint32_t) &user1);
-    init_task_stack(usr2_task, (uint32_t*)KERNEL_T2_STACK, (uint32_t*)USER2_STACK, (uint32_t)&user2);
+    init_task_stack(usr2_task, (uint32_t*)KERNEL_T2_STACK, (uint32_t*)USER2_STACK,(uint32_t) &user2);
 
     current_task= krn_task;
 }
@@ -79,4 +81,6 @@ void tp()
     initialise_all_tasks();
     
     force_interrupts_on();
+
+    while(1);
 }
