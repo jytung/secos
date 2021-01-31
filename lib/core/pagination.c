@@ -58,12 +58,13 @@ void pagination()
     pg_set_entry(&user2_pgd[U1_idx], PG_RW | PG_KRN | PG_P, page_nr(U2_PTB));
     pg_set_entry(&user2_pgd[SHM_idx], PG_RW | PG_KRN | PG_P, page_nr(U2_SHM_PTB));
 
+    //kernel can map from 0x0-0x3FFFFF
     set_pte(kernel_ptb, PG_RW | PG_KRN, KRN_idx);
-
+    //user 1 can map from 0x400000-0x7FFFFF
     set_pte(user1_ptb, PG_RW | PG_USR, U1_idx);
     set_pte(user1_kernel_ptb, PG_RW | PG_USR, KRN_idx);
     set_pte(user1_shared_ptb, PG_RW | PG_USR, SHM_idx);
-
+    //user 1 can map from 0x800000-0xcFFFFF
     set_pte(user2_ptb, PG_RW | PG_USR, U2_idx);
     set_pte(user2_kernel_ptb, PG_RW | PG_USR, KRN_idx);
     set_pte(user2_shared_ptb, PG_RW | PG_USR, SHM_idx);

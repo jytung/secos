@@ -1,7 +1,7 @@
 #include <segmem.h>
 #include <debug.h>
 #include <info.h>
-
+#include <gdt.h>
 #define SIZE_GDT 6
 seg_desc_t GDT[SIZE_GDT];
 tss_t TSS;
@@ -55,7 +55,7 @@ void init_TSS()
     offset_t base = (offset_t)&TSS;
     uint32_t limit = sizeof(TSS) - 1;
 
-    TSS.s0.ss = gdt_krn_seg_sel(2);
+    TSS.s0.ss = krn_data_segment;
     TSS.s0.esp = get_ebp();
     set_each_descriptor(&GDT[5], SEG_DESC_SYS_TSS_AVL_32, SEG_SEL_KRN, base, limit);
     GDT[5].s = 0;
@@ -74,19 +74,19 @@ void init_gdt()
     //Ring 0
     set_each_descriptor(&GDT[1], SEG_DESC_CODE_XR, SEG_SEL_KRN, 0, 0xffffffff);
     set_each_descriptor(&GDT[2], SEG_DESC_DATA_RW, SEG_SEL_KRN, 0, 0xffffffff);
-    set_cs(gdt_krn_seg_sel(1));
-    set_ds(gdt_krn_seg_sel(2));
-    set_ss(gdt_krn_seg_sel(2));
-    set_fs(gdt_krn_seg_sel(2));
-    set_es(gdt_krn_seg_sel(2));
-    set_gs(gdt_krn_seg_sel(2));
+    set_cs(krn_code_segment);
+    set_ds(krn_data_segment);
+    set_ss(krn_data_segment);
+    set_fs(krn_data_segment);
+    set_es(krn_data_segment);
+    set_gs(krn_data_segment);
 
     //Ring3
     set_each_descriptor(&GDT[3], SEG_DESC_CODE_XR, SEG_SEL_USR, 0, 0xffffffff);
     set_each_descriptor(&GDT[4], SEG_DESC_DATA_RW, SEG_SEL_USR, 0, 0xffffffff);
-    set_ds(gdt_usr_seg_sel(4));
-    set_es(gdt_usr_seg_sel(4));
-    set_fs(gdt_usr_seg_sel(4));
-    set_gs(gdt_usr_seg_sel(4));
+    set_ds(user_data_segment);
+    set_es(user_data_segment);
+    set_fs(user_data_segment);
+    set_gs(user_data_segment);
     print_gdt();
 }

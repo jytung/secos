@@ -10,7 +10,7 @@ extern void idt_trampoline();
 static int_desc_t IDT[IDT_NR_DESC];
 task_t *current_task;
 extern tss_t TSS;
-extern void __attribute__((regparm(1))) switch_stack(uint32_t* interrupted_esp, uint32_t* next_esp);
+extern void __attribute__((regparm(1))) switch_stack( uint32_t* next_esp);
 
 void intr_init()
 {
@@ -31,12 +31,13 @@ void intr_init()
 
 void __regparm__(1) intr32_hdlr(int_ctx_t *ctx)
 {
-   
-   uint32_t* interrupted_esp =(uint32_t*)get_esp();
    debug("\nEnter int32 handler\n");
    uint32_t eip = ctx->eip.raw;
+   //debug("before intr\n");
+   //print_task(current_task);
    current_task = current_task->next_task;
-   
+   //debug("after intr\n");
+   //print_task(current_task);
    //Identify interrupted task
    if(eip>=KERNEL_BEGIN && eip< USER1_BEGIN) {
       debug("Kernel task interrupted \n");
@@ -47,21 +48,19 @@ void __regparm__(1) intr32_hdlr(int_ctx_t *ctx)
    else if(eip >=USER2_BEGIN && eip <=USER2_END){
       debug("User2 task interrupted \n");
    }
+   uint32_t* next_esp= current_task->krn_stack_esp;
 
+   //debug("next_esp: %x \n", next_esp);
    
-   debug("interrupted_esp: %x \n", interrupted_esp);
-   debug("next_esp: %x \n", current_task->krn_stack_esp);
-
-   TSS.s0.esp = (uint32_t)current_task->krn_stack_ebp;
    set_cr3(current_task->pgd);
-  
+   TSS.s0.esp = (uint32_t)current_task->krn_stack_ebp;
 
    //change stack
-   switch_stack(interrupted_esp, current_task->krn_stack_esp);
+   switch_stack(next_esp);
 }
 
 void intr80_hdlr(int_ctx_t *ctx){
-   debug("incrementing counter: %d",ctx->gpr.esi);
+   debug("incrementing counter: %d",ctx->gpr.esi.raw);
 }
 
 void print_intr(int_ctx_t *ctx){

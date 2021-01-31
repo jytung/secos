@@ -60,8 +60,10 @@ QEMU := $(shell which kvm)
 QFDA := -drive media=disk,format=raw,if=floppy,file=../utils/grub.floppy
 QHDD := -drive media=disk,format=raw,if=ide,index=0,file=fat:rw:.
 QSRL := -serial mon:stdio
-QDBG := -d int,pcall,cpu_reset,unimp,guest_errors
-QOPT := $(QFDA) $(QHDD) $(QSRL) $(QDBG) -boot a -nographic 
+#QDBG := -d int,pcall,cpu_reset,unimp,guest_errors
+QDBG := -d int,pcall,cpu_reset,unimp,guest_errors,in_asm -D /tmp/qemu.log
+#QOPT := $(QFDA) $(QHDD) $(QSRL) $(QDBG) -boot a -nographic -no-reboot
+QOPT := $(QFDA) $(QHDD) $(QSRL) $(QDBG) -boot a -nographic $(QOPT) -no-reboot 
 
 ifneq ($(findstring "kvm",$(QEMU)),)
 QOPT += -cpu host 

@@ -6,8 +6,14 @@
 #include <info.h>
 
 #define SIZE_GDT 6
+#define krn_code_segment    gdt_krn_seg_sel(1)
+#define krn_data_segment    gdt_krn_seg_sel(2)
+#define user_code_segment   gdt_usr_seg_sel(3)
+#define user_data_segment   gdt_usr_seg_sel(4)
+
 extern seg_desc_t GDT[SIZE_GDT];
 extern tss_t TSS;
+
 
 void print_gdt();
 

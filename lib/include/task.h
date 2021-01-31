@@ -16,5 +16,5 @@ typedef struct task
 
 void init_task(task_t * task, task_t *next_task, pde32_t * pgd);
 void init_task_stack(task_t *task, uint32_t *krn_stack, uint32_t *usr_stack, uint32_t eip);
-
+void print_task(task_t *task);
 #endif

@@ -10,8 +10,8 @@
 
 /*******    Kernel         ********/
 #define KERNEL_BEGIN    0x300000
-#define KERNEL_T1_STACK 0x300000
-#define KERNEL_T2_STACK 0x310000
+#define KERNEL_T1_STACK 0x310000
+#define KERNEL_T2_STACK 0x320000
 
 //allocate PGD and PTB
 #define KRN_PGD         0x390000
