@@ -40,5 +40,6 @@ void print_task(task_t *task){
     debug("\n print task \n");
     debug(" ebp = %x\n",task->krn_stack_ebp);
     debug(" esp = %x\n",task->krn_stack_esp);
+    debug(" pgd = %x\n",task->pgd);
     debug(" next_task = %x\n",task->next_task);
 }

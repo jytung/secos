@@ -31,9 +31,7 @@ void __attribute__((section(".user1"))) user1()
     while (1)
     {
         (*cpt_user1)++;
-        
     }
-    
 }
 
 void __attribute__((section(".user2"))) user2()
@@ -44,7 +42,6 @@ void __attribute__((section(".user2"))) user2()
     {
         sys_counter(cpt_user2);
     }
-    
 }
 
 void initialise_all_tasks()
@@ -75,7 +72,7 @@ void tp()
     debug("\nInitialise compter to 0 \n");
     *cpt_user1 = 0;
     *cpt_user2 = 0;
-
+    
     //pagination();
     debug("\nEnable interruption \n");
     idt_reg_t idtr;

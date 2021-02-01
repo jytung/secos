@@ -22,7 +22,7 @@ void pagination()
     /********   Kernel(0 - 0x400000)           ********/
     /********   User1 (0x400000 - 0x800000)    ********/
     /********   User2 (0x800000 - 0xC00000)    ********/
-    /********   Shared memory (0xC10000)        ********/
+    /********   Shared memory (0xC10000)       ********/
     debug("\nActivate pagination \n");
     pde32_t *kernel_pgd = (pde32_t *)KRN_PGD;
     pde32_t *user1_pgd = (pde32_t *)U1_PGD;
@@ -36,41 +36,43 @@ void pagination()
     pte32_t *user1_shared_ptb = (pte32_t *)U1_SHM_PTB;
     pte32_t *user2_shared_ptb = (pte32_t *)U2_SHM_PTB;
 
-    memset((void *)kernel_pgd, 0, PAGE_SIZE);
-    memset((void *)user1_pgd, 0, PAGE_SIZE);
-    memset((void *)user2_pgd, 0, PAGE_SIZE);
+    memset((void *)kernel_pgd       , 0, PAGE_SIZE);
+    memset((void *)user1_pgd        , 0, PAGE_SIZE);
+    memset((void *)user2_pgd        , 0, PAGE_SIZE);
 
-    memset((void *)kernel_ptb, 0, PAGE_SIZE);
-    memset((void *)user1_ptb, 0, PAGE_SIZE);
-    memset((void *)user1_kernel_ptb, 0, PAGE_SIZE);
-    memset((void *)user1_shared_ptb, 0, PAGE_SIZE);
-    memset((void *)user2_ptb, 0, PAGE_SIZE);
-    memset((void *)user2_kernel_ptb, 0, PAGE_SIZE);
-    memset((void *)user2_shared_ptb, 0, PAGE_SIZE);
+    memset((void *)kernel_ptb       , 0, PAGE_SIZE);
+    memset((void *)user1_ptb        , 0, PAGE_SIZE);
+    memset((void *)user1_kernel_ptb , 0, PAGE_SIZE);
+    memset((void *)user1_shared_ptb , 0, PAGE_SIZE);
+    memset((void *)user2_ptb        , 0, PAGE_SIZE);
+    memset((void *)user2_kernel_ptb , 0, PAGE_SIZE);
+    memset((void *)user2_shared_ptb , 0, PAGE_SIZE);
 
-    pg_set_entry(&kernel_pgd[KRN_idx], PG_RW | PG_KRN | PG_P, page_nr(KRN_PTB));
+    pg_set_entry(&kernel_pgd[KRN_idx], PG_RW | PG_KRN , page_nr(KRN_PTB));
 
-    pg_set_entry(&user1_pgd[KRN_idx], PG_RW | PG_KRN | PG_P, page_nr(U1_KRN_PTB));
-    pg_set_entry(&user1_pgd[U1_idx], PG_RW | PG_KRN | PG_P, page_nr(U1_PTB));
-    pg_set_entry(&user1_pgd[SHM_idx], PG_RW | PG_KRN | PG_P, page_nr(U1_SHM_PTB));
+    pg_set_entry(&user1_pgd[KRN_idx], PG_RW | PG_KRN , page_nr(U1_KRN_PTB));
+    pg_set_entry(&user1_pgd[U1_idx], PG_RW | PG_KRN , page_nr(U1_PTB));
+    pg_set_entry(&user1_pgd[SHM_idx], PG_RW | PG_KRN , page_nr(U1_SHM_PTB));
 
-    pg_set_entry(&user2_pgd[KRN_idx], PG_RW | PG_KRN | PG_P, page_nr(U2_KRN_PTB));
-    pg_set_entry(&user2_pgd[U1_idx], PG_RW | PG_KRN | PG_P, page_nr(U2_PTB));
-    pg_set_entry(&user2_pgd[SHM_idx], PG_RW | PG_KRN | PG_P, page_nr(U2_SHM_PTB));
+    pg_set_entry(&user2_pgd[KRN_idx], PG_RW | PG_KRN , page_nr(U2_KRN_PTB));
+    pg_set_entry(&user2_pgd[U1_idx], PG_RW | PG_KRN , page_nr(U2_PTB));
+    pg_set_entry(&user2_pgd[SHM_idx], PG_RW | PG_KRN , page_nr(U2_SHM_PTB));
 
-    //kernel can map from 0x0-0x3FFFFF
-    set_pte(kernel_ptb, PG_RW | PG_KRN, KRN_idx);
-    //user 1 can map from 0x400000-0x7FFFFF
-    set_pte(user1_ptb, PG_RW | PG_USR, U1_idx);
+    //set ptb identies 
+    
+
+    set_pte(kernel_ptb      , PG_RW | PG_KRN, KRN_idx);
+
+    set_pte(user1_ptb       , PG_RW | PG_USR, U1_idx);
     set_pte(user1_kernel_ptb, PG_RW | PG_USR, KRN_idx);
     set_pte(user1_shared_ptb, PG_RW | PG_USR, SHM_idx);
-    //user 1 can map from 0x800000-0xcFFFFF
-    set_pte(user2_ptb, PG_RW | PG_USR, U2_idx);
+
+    set_pte(user2_ptb       , PG_RW | PG_USR, U2_idx);
     set_pte(user2_kernel_ptb, PG_RW | PG_USR, KRN_idx);
     set_pte(user2_shared_ptb, PG_RW | PG_USR, SHM_idx);
     
-    pg_set_entry(&user1_ptb[pt32_idx(CPT_USER1_ADDR)], PG_USR | PG_RW | PG_P, page_nr(SHM_ADDR));
-    pg_set_entry(&user2_ptb[pt32_idx(CPT_USER2_ADDR)], PG_USR | PG_RW | PG_P, page_nr(SHM_ADDR));
+    pg_set_entry(&user1_ptb[pt32_idx(CPT_USER1_ADDR)], PG_USR | PG_RW , page_nr(SHM_ADDR));
+    pg_set_entry(&user2_ptb[pt32_idx(CPT_USER2_ADDR)], PG_USR | PG_RW , page_nr(SHM_ADDR));
 
     set_cr3(KRN_PGD);
 
