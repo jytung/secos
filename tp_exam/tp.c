@@ -26,7 +26,6 @@ void sys_counter(uint32_t *cpt)
 
 void __attribute__((section(".user1"))) user1()
 {   
-    //debug("Enter user1\n");
     //write in the shared memory
     while (1)
     {
@@ -36,8 +35,8 @@ void __attribute__((section(".user1"))) user1()
 
 void __attribute__((section(".user2"))) user2()
 {   
-    //debug("Enter user2\n");
     //read in the shared memory
+    *cpt_user2=0;
     while (1)
     {
         sys_counter(cpt_user2);
@@ -66,7 +65,6 @@ void initialise_all_tasks()
 
 void tp()
 {
-    
     init_gdt();
     init_TSS();
 
