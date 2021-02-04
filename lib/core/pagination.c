@@ -50,17 +50,15 @@ void pagination()
 
     pg_set_entry(&kernel_pgd[KRN_idx], PG_RW | PG_KRN , page_nr(KRN_PTB));
 
-    pg_set_entry(&user1_pgd[KRN_idx], PG_RW | PG_KRN , page_nr(U1_KRN_PTB));
-    pg_set_entry(&user1_pgd[U1_idx], PG_RW | PG_KRN , page_nr(U1_PTB));
-    pg_set_entry(&user1_pgd[SHM_idx], PG_RW | PG_KRN , page_nr(U1_SHM_PTB));
+    pg_set_entry(&user1_pgd[KRN_idx], PG_RW | PG_USR , page_nr(U1_KRN_PTB));
+    pg_set_entry(&user1_pgd[U1_idx], PG_RW | PG_USR , page_nr(U1_PTB));
+    pg_set_entry(&user1_pgd[SHM_idx], PG_RW | PG_USR , page_nr(U1_SHM_PTB));
 
-    pg_set_entry(&user2_pgd[KRN_idx], PG_RW | PG_KRN , page_nr(U2_KRN_PTB));
-    pg_set_entry(&user2_pgd[U1_idx], PG_RW | PG_KRN , page_nr(U2_PTB));
-    pg_set_entry(&user2_pgd[SHM_idx], PG_RW | PG_KRN , page_nr(U2_SHM_PTB));
+    pg_set_entry(&user2_pgd[KRN_idx], PG_RW | PG_USR , page_nr(U2_KRN_PTB));
+    pg_set_entry(&user2_pgd[U2_idx], PG_RW | PG_USR , page_nr(U2_PTB));
+    pg_set_entry(&user2_pgd[SHM_idx], PG_RW | PG_USR , page_nr(U2_SHM_PTB));
 
-    //set ptb identies 
-    
-
+    //identity mapping
     set_pte(kernel_ptb      , PG_RW | PG_KRN, KRN_idx);
 
     set_pte(user1_ptb       , PG_RW | PG_USR, U1_idx);
@@ -71,6 +69,7 @@ void pagination()
     set_pte(user2_kernel_ptb, PG_RW | PG_USR, KRN_idx);
     set_pte(user2_shared_ptb, PG_RW | PG_USR, SHM_idx);
     
+    //pg_set_entry(&kernel_ptb[pt32_idx(CPT_KRN_ADDR)], PG_USR | PG_RW , page_nr(SHM_ADDR));
     pg_set_entry(&user1_ptb[pt32_idx(CPT_USER1_ADDR)], PG_USR | PG_RW , page_nr(SHM_ADDR));
     pg_set_entry(&user2_ptb[pt32_idx(CPT_USER2_ADDR)], PG_USR | PG_RW , page_nr(SHM_ADDR));
 

@@ -41,6 +41,7 @@ void __attribute__((section(".user2"))) user2()
     while (1)
     {
         sys_counter(cpt_user2);
+        
     }
 }
 
@@ -73,13 +74,12 @@ void tp()
     *cpt_user1 = 0;
     *cpt_user2 = 0;
     
-    //pagination();
+    pagination();
     debug("\nEnable interruption \n");
     idt_reg_t idtr;
     get_idtr(idtr);
 
     initialise_all_tasks();
-    
     force_interrupts_on();
 
     while(1);

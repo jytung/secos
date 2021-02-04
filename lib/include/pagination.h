@@ -10,6 +10,7 @@
 
 /*******    Kernel         ********/
 #define KERNEL_BEGIN    0x300000
+//#define CPT_KRN_ADDR    0x301000
 #define KERNEL_T1_STACK 0x310000
 #define KERNEL_T2_STACK 0x320000
 

@@ -4,17 +4,10 @@
 .type  switch_stack,"function"
 
 switch_stack:
-    # eax = second argument = new kernel stack esp  
-
-    # load new stack       
-	# movl     %esp,(%ecx)
+    push    %ebp
     # save interrupted esp 
-    #mov     %esp, %edx
+    mov     %esp, (%eax)
     # new esp = new kernel stack pointer 
-    mov     %eax,%esp  
-         
-
-    # resume from intr       
-	popa
-    add     $8, %esp
-    iret              
+    mov     %edx,%esp  
+    pop     %ebp     
+    ret

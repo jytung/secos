@@ -33,7 +33,8 @@ void init_task_stack(task_t *task, uint32_t *krn_stack_ebp, uint32_t *usr_stack_
     ctx->gpr.esi.raw = 0x7;
     ctx->gpr.edi.raw = 0x8;
          
-    memcpy((void *)task->krn_stack_esp, ctx, sizeof(int_ctx_t));
+    *(--task->krn_stack_esp)= (uint32_t) resume_from_intr;
+    *(--task->krn_stack_esp)= 0xbeef; //fausse ebp 
 }
 
 void print_task(task_t *task){
