@@ -40,7 +40,6 @@ void __attribute__((section(".user2"))) user2()
     while (1)
     {
         sys_counter(cpt_user2);
-        
     }
 }
 
@@ -57,9 +56,6 @@ void initialise_all_tasks()
     init_task_stack(&usr1_task, (uint32_t*)KERNEL_T1_STACK, (uint32_t*)USER1_STACK,(uint32_t) &user1);
     init_task_stack(&usr2_task, (uint32_t*)KERNEL_T2_STACK, (uint32_t*)USER2_STACK,(uint32_t) &user2);
 
-    //print_task(&krn_task);
-    //print_task(&usr1_task); 
-    //print_task(&usr2_task);
     current_task = &krn_task;
 }
 

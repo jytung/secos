@@ -79,3 +79,7 @@ $ tar czf nom.prenom.tar.gz *.patch
 ```
 
 Ceci vous génère une archive compressée contenant vos modifications, que vous pouvez m'envoyer par mail à "stephane.duverger@gmail.com".
+
+##Notes
+Commande de compilation:
+```qemu-system-i386 -kernel kernel.elf -nographic```
